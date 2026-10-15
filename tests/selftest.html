@@ -13,7 +13,13 @@
 <pre id="out"></pre>
 <script type="module">
 import { measureHand, realHandedness, summarize, angleBetween, toPixels } from "../js/measure.js";
-import { westernSign, birthNumber, chineseAnimal, fullReading, SIGNS, ELEMENT_PREDICTS } from "../js/reading.js";
+import { westernSign, birthNumber, chineseAnimal, fullReading, useAstrology } from "../js/reading.js";
+import { loadKB } from "../js/kb.js";
+import { matchMeasured, matchLines, composeReading, cardFor, confidenceOf, summaryLine, isSafe, LABELS } from "../js/palmread.js";
+const KB = await loadKB();
+useAstrology(KB.astro);
+const SIGNS = KB.astro.signs;
+const ELEMENT_PREDICTS = KB.astro.element_predicts;
 import { compare, readTally, addToTally, chanceRange, verdict } from "../js/experiment.js";
 
 const out = document.getElementById("out");
@@ -60,7 +66,7 @@ check("zodiac borders (20 dates)", wrong.length === 0, wrong.map((w) => w.join("
 let everyDay = true;
 for (let mo = 1; mo <= 12; mo++) for (let d = 1; d <= 31; d++) if (!westernSign(mo, d)) everyDay = false;
 check("every day of the year has a sign", everyDay);
-check("12 signs, 3 per element", SIGNS.length === 12 && Object.keys(ELEMENT_PREDICTS).every((e) => SIGNS.filter((x) => x.element === e).length === 3));
+check("12 signs, 3 per element", SIGNS.length === 12 && ["Fire", "Earth", "Air", "Water"].every((e) => SIGNS.filter((x) => x.element === e).length === 3));
 check("birth number 2012-03-14 -> 13 -> 4", birthNumber(2012, 3, 14) === 4);
 check("birth number 1999-12-31 -> 35 -> 8", birthNumber(1999, 12, 31) === 8);
 check("birth number always 1..9", [[2000, 1, 1], [1988, 8, 8], [2013, 9, 9]].every(([y, mo, d]) => { const n = birthNumber(y, mo, d); return n >= 1 && n <= 9; }));
@@ -72,9 +78,75 @@ check("late January / early February: says it may be last year's", chineseAnimal
 const r = fullReading("2012-08-15");
 check("full reading", r.sign.name === "Leo" && r.number === 1 && r.chinese.animal.name === "Dragon" && r.predicts.energy === "energetic");
 const banned = /death|die|illness|disease|accident|money|loss|marriage|marry|exam|fail/i;
-const allText = SIGNS.map((x) => x.text).join(" ") + JSON.stringify((await import("../js/reading.js")).NUMBERS) +
-  (await import("../js/reading.js")).ANIMALS.map((a) => a.text).join(" ");
+const allText = SIGNS.map((x) => x.text + " " + x.traits.join(" ")).join(" ") + JSON.stringify(KB.astro.numbers) +
+  KB.astro.animals.map((a) => a.text).join(" ");
 check("no frightening or forbidden topics in any reading", !banned.test(allText), (allText.match(banned) || [""])[0]);
+
+
+// ---------- the knowledge bases
+out.innerHTML += "-- knowledge bases (data/*.json)\n";
+const PK = KB.palm;
+const shown = PK.entries.filter((e) => !e.withheld);
+const lineIds = new Set(PK.lines.map((l) => l.id));
+let shapeOk = true, why = "";
+for (const e of PK.entries) {
+  if (!e.id || !e.feature || !e.variation || !e.match) { shapeOk = false; why = e.id; }
+  if (e.withheld) { if (!e.withheld_note) { shapeOk = false; why = e.id + " no note"; } continue; }
+  if (!["single", "agree", "disagree", "differ"].includes(e.relation)) { shapeOk = false; why = e.id + " relation"; }
+  if (e.relation !== "single" && !e.relation_note) { shapeOk = false; why = e.id + " relation_note"; }
+  for (const r of e.readings || []) {
+    if (!PK.sources[r.source] || !r.where || !r.meaning || !r.text) { shapeOk = false; why = e.id + " reading"; }
+  }
+  if (!(e.readings || []).length) { shapeOk = false; why = e.id + " no readings"; }
+}
+check("every entry: feature, variation, match, relation, and each reading has source + chapter + meaning + text", shapeOk, why);
+check("all four lines are covered", ["heart", "head", "life", "fate"].every((id) => lineIds.has(id) && PK.entries.some((e) => e.match.line === id && !e.withheld)));
+const vars = new Set(PK.entries.filter((e) => e.match.line).flatMap((e) => [].concat(e.match.v)));
+check("line variations include long, short, deep, faint, straight, sloping", ["long", "short", "deep", "faint", "straight", "sloping"].every((v) => vars.has(v)), [...vars].join(","));
+let qOk = true;
+for (const e of PK.entries.filter((x) => x.match.line)) {
+  const q = PK.lines.find((l) => l.id === e.match.line).questions.find((x) => x.id === e.match.q);
+  if (!q || ![].concat(e.match.v).every((v) => q.options.some((o) => o.v === v))) { qOk = false; why = e.id; }
+}
+check("every line entry points at a real question and option", qOk, why);
+check("both books are cited, with Project Gutenberg links", PK.sources.cheiro.url.includes("gutenberg.org/ebooks/20480") && PK.sources.dale.url.includes("gutenberg.org/ebooks/52523"));
+const palmText = JSON.stringify(shown.map((e) => e.readings));
+check("no forbidden topic anywhere in a shown palmistry reading", isSafe(palmText), (palmText.match(/\b(death|die|disease|illness|accident|marr\w*|divorce|exam\w*|money|financ\w*|loss|pregnan\w*|rich\w*|wealth|poverty)\b/i) || [""])[0]);
+check("summaries are short (no long copied passages)", shown.every((e) => e.readings.every((r) => r.text.length <= 260)),
+  shown.flatMap((e) => e.readings).filter((r) => r.text.length > 260).map((r) => r.text.slice(0, 30)).join("|"));
+check("there are real contradictions and agreements to show", PK.entries.some((e) => e.relation === "disagree") && PK.entries.some((e) => e.relation === "agree"));
+check("forbidden-word filter catches the obvious", !isSafe("you will marry rich") && !isSafe("an early death") && isSafe("will-power and skill"));
+
+// ---------- reading generation
+out.innerHTML += "-- palmread.js (building a reading)\n";
+const hand = { palmShape: 0.80, fingerPalm: 1.00, indexRing: 0.90, thumbIndex: 1.10, thumbAngle: 12, gapIndexMiddle: 2, gapRingLittle: 2 };
+const mm1 = matchMeasured(hand, PK).map((x) => x.entry.id);
+check("square palm + longer ring finger are matched from measurements", mm1.includes("palm-square") && mm1.includes("ring-longer") && !mm1.includes("palm-long"), mm1.join(","));
+const nearCut = matchMeasured({ palmShape: 0.77 }, PK)[0];
+check("a value close to the cut-off is labelled Low confidence", confidenceOf(nearCut) === "Low confidence");
+check("a firm measurement is labelled Traditional interpretation", confidenceOf(matchMeasured({ palmShape: 0.85 }, PK)[0]) === "Traditional interpretation");
+check("a 'stretch' mapping is always Low confidence", confidenceOf(matchMeasured({ indexRing: 0.80 }, PK)[0]) === "Low confidence");
+const ans = { head: { start: "joined", shape: "straight" }, life: { length: "short" } };
+const lm = matchLines(ans, PK).map((x) => x.entry.id);
+check("line answers map to the right entries", lm.includes("head-joined") && lm.includes("head-straight") && lm.includes("life-length"), lm.join(","));
+const rd = composeReading({ measures: hand, answers: ans, dob: true }, PK);
+check("with a birthday: 2 palm cards (+ sign + number = 4)", rd.palmCards.length === 2, rd.palmCards.map((c) => c.id).join(","));
+check("line answers come before measurements", rd.palmCards[0].id.startsWith("head-"));
+check("a short life line is NEVER shown as a card, only listed as left out", !rd.palmCards.some((c) => c.id === "life-length") && rd.withheld.some((w) => /does NOT mean a short life/.test(w.note)));
+const joined = cardFor({ entry: PK.entries.find((e) => e.id === "head-joined"), kind: "line", why: "" }, PK);
+check("contradiction notice: both books shown side by side", joined.relation === "disagree" && joined.readings.length === 2 && joined.readings.map((r) => r.source).sort().join() === "cheiro,dale" && !!joined.notice);
+check("every reading on a card carries its book", joined.readings.every((r) => r.book && r.book.title && r.where));
+const noDob = composeReading({ measures: hand, answers: ans, dob: false }, PK);
+check("without a birthday: up to 4 palm cards", noDob.palmCards.length >= 2 && noDob.palmCards.length <= 4, String(noDob.palmCards.length));
+const empty = composeReading({ measures: null, answers: {}, dob: true }, PK);
+check("birthday only: no palm cards, nothing invented", empty.palmCards.length === 0 && empty.withheld.length === 0);
+const allLabels = new Set([...rd.palmCards, ...noDob.palmCards].map((c) => c.confidence));
+check("labels are only the three allowed ones", [...allLabels].every((l) => LABELS.includes(l)), [...allLabels].join(","));
+const sumLine = summaryLine(fullReading("2012-08-15"), rd.palmCards);
+check("summary is built only from knowledge-base words", sumLine.includes("warm, confident, big-hearted") && sumLine.includes(rd.palmCards[0].readings[0].meaning) && isSafe(sumLine), sumLine);
+const whyText = rd.palmCards.map((c) => c.why).join(" | ");
+check("'Why this reading?' explains each palm card", rd.palmCards.every((c) => c.why && c.why.length > 5), whyText);
+check("birth number shows its working", fullReading("2012-08-15").numberSteps.join(" ") === "2+0+1+2+0+8+1+5 = 19 1+9 = 10 1+0 = 1");
 
 // ---------- the experiment
 out.innerHTML += "-- experiment.js\n";

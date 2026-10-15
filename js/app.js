@@ -1,11 +1,13 @@
 // app.js - screens, the Cultural Reading, the Mini Experiment and "New Visitor".
 
-import { initScan, resetScan, stopCamera, preloadModel } from "./scan.js";
-import { fullReading } from "./reading.js";
+import { initScan, resetScan, stopCamera, preloadModel, lastCapture } from "./scan.js";
+import { fullReading, useAstrology } from "./reading.js";
+import { loadKB } from "./kb.js";
+import { initReadingUI, onShowReading, resetReadingUI } from "./readingui.js";
 import { QUESTIONS, compare, readTally, addToTally, clearTally, chanceRange, verdict } from "./experiment.js";
 
 const $ = (id) => document.getElementById(id);
-const SCREENS = ["home", "scan", "reading", "experiment", "learn"];
+const SCREENS = ["home", "scan", "reading", "experiment", "learn", "sources"];
 
 // Everything about the current visitor lives here and nowhere else.
 let visitor = { answers: {}, counted: false };
@@ -18,6 +20,7 @@ function show() {
   if (name !== "scan") stopCamera();          // never leave the camera running in the background
   if (name === "scan") preloadModel();
   if (name === "experiment") renderTally();
+  if (name === "reading" && kbReady) onShowReading();
   window.scrollTo(0, 0);
 }
 
@@ -29,29 +32,6 @@ function todayISO() {
 
 function validDate(v) {
   return /^\d{4}-\d{2}-\d{2}$/.test(v) && v >= "1920-01-01" && v <= todayISO();
-}
-
-function readingCards(r) {
-  const c = r.chinese;
-  return [
-    `<div class="card"><div class="emoji">${r.sign.symbol}</div><div class="k">Western zodiac sign</div>` +
-      `<div class="v">${r.sign.name}</div><div class="e">Element: ${r.sign.element}. ${r.sign.text}</div></div>`,
-    `<div class="card"><div class="emoji">🔢</div><div class="k">Birth number (numerology)</div>` +
-      `<div class="v">${r.number}</div><div class="e">Add every digit of your birthday until one digit is left. ${r.numberText}</div></div>`,
-    `<div class="card"><div class="emoji">${c.animal.emoji}</div><div class="k">Chinese zodiac animal</div>` +
-      `<div class="v">${c.animal.name}</div><div class="e">${c.animal.text}` +
-      (c.maybe ? ` <b>Note:</b> your birthday is close to the Lunar New Year, so in some calendars you may be a ${c.maybe.name} ${c.maybe.emoji} instead.` : "") +
-      `</div></div>`,
-  ].join("");
-}
-
-function showReading() {
-  const v = $("dob").value;
-  if (!validDate(v)) { alert("Please choose a real date of birth first."); return; }
-  const r = fullReading(v);
-  $("readingCards").innerHTML = readingCards(r);
-  $("readingOut").hidden = false;
-  $("readingOut").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 // ------------------------------------------------------------------ experiment
@@ -118,8 +98,7 @@ function newVisitor() {
   resetScan();
   $("dob").value = "";
   $("dob2").value = "";
-  $("readingOut").hidden = true;
-  $("readingCards").innerHTML = "";
+  if (kbReady) resetReadingUI();
   $("expOut").hidden = true;
   $("expOut").innerHTML = "";
   renderQuiz();
@@ -128,7 +107,10 @@ function newVisitor() {
 }
 
 // ------------------------------------------------------------------ start
+let kbReady = false;
+
 function init() {
+  // Buttons that do not need the reading data work straight away.
   const today = todayISO();
   $("dob").max = today;
   $("dob2").max = today;
@@ -140,8 +122,10 @@ function init() {
     visitor.answers[b.dataset.q] = b.dataset.v;
     renderQuiz();
   });
-  $("readBtn").addEventListener("click", showReading);
-  $("revealBtn").addEventListener("click", reveal);
+  $("revealBtn").addEventListener("click", () => {
+    if (!kbReady) { alert("Still loading the reading data - try again in a moment."); return; }
+    reveal();
+  });
   $("clearTally").addEventListener("click", () => {
     if (confirm("Clear all the exhibition counts on this device?")) { clearTally(); renderTally(); }
   });
@@ -152,6 +136,19 @@ function init() {
 
   // Offline support: after one visit, the app (and the AI model) work without internet.
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+
+  // The knowledge bases: every reading is built only from them.
+  $("readBtn").disabled = true;
+  loadKB().then((kb) => {
+    useAstrology(kb.astro);
+    initReadingUI(kb, lastCapture, todayISO);
+    kbReady = true;
+    $("readBtn").disabled = false;
+    if (location.hash === "#reading") onShowReading();
+  }).catch(() => {
+    document.querySelector("main").insertAdjacentHTML("afterbegin",
+      '<p class="note warn"><b>Could not load the reading data.</b> Connect to the internet once and reload.</p>');
+  });
 }
 
 init();

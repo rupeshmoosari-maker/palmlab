@@ -136,3 +136,39 @@ details[open] { padding-bottom: 10px; }
 .disclaimer { display: inline-block; font-weight: 800; background: var(--warn-bg); color: var(--warn-ink); padding: 10px 14px; border-radius: 12px; }
 #readingOut, #expOut, #scanResults, #repeatBox { scroll-margin-top: 84px; }
 .note:empty { display: none; }
+
+/* ---- Palm & Star Reading ---------------------------------------------- */
+.sources { background: #8a5a00; }
+.viewtoggle { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 10px 0 14px;
+  border: 2px solid var(--purple); border-radius: 14px; overflow: hidden; }
+.vt { min-height: 52px; border: 0; background: #fff; color: var(--purple); font: inherit; font-weight: 800; cursor: pointer; }
+.vt.on, .vt[aria-selected="true"] { background: var(--purple); color: #fff; }
+.vt.science.on, .vt.science[aria-selected="true"] { background: var(--science); }
+.vt.culture.on, .vt.culture[aria-selected="true"] { background: var(--story); }
+.view { border-radius: 16px; padding: 4px 0; }
+.science-view .viewhead { background: #e2f4f3; color: #064b48; border-radius: 12px; padding: 10px 14px; }
+.badge { display: inline-block; font-size: .78rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; margin: 4px 4px 2px 0; }
+.b-exp { background: #d7f2ef; color: #064b48; }
+.b-trad { background: #ffe6d5; color: #7a2e06; }
+.b-low { background: #e8e6ee; color: #3d3852; }
+.cite { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+.clash, .agree { border-radius: 10px; padding: 8px 12px; font-size: .95rem; }
+.clash { background: #fff1e6; border-left: 5px solid var(--story); }
+.agree { background: #e8f6ec; border-left: 5px solid var(--good); }
+.sidebyside { display: grid; gap: 10px; }
+@media (min-width: 560px) { .sidebyside { grid-template-columns: 1fr 1fr; } }
+.reading-src { background: #faf8ff; border: 1px solid var(--line); border-radius: 12px; padding: 4px 12px; }
+.summary { font-size: 1.05rem; font-weight: 600; background: #fff; border-radius: 12px; padding: 10px 14px; border: 2px solid var(--line); }
+.linebox { background: #fff; }
+.linebox summary .count { margin-left: 8px; font-size: .8rem; background: var(--story); color: #fff; padding: 2px 8px; border-radius: 999px; }
+.pq p { font-weight: 700; margin: 10px 0 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 48px; padding: 8px 14px; border-radius: 24px; border: 2px solid var(--line); background: #fff;
+  color: var(--ink); font: inherit; font-size: .95rem; cursor: pointer; text-align: left; }
+.chip.on { background: var(--story); border-color: var(--story); color: #fff; font-weight: 700; }
+.why { background: #fff; }
+.why ul { padding-left: 20px; }
+.why li { margin: 6px 0; }
+.labels { list-style: none; padding: 0; }
+.labels li { margin: 8px 0; }
+.palmcard .k { margin-bottom: 2px; }

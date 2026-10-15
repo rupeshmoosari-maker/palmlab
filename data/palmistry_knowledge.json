@@ -1,0 +1,552 @@
+{
+  "version": 1,
+  "about": "Traditional palmistry meanings, summarised in our own short words from two public-domain books. Each entry says which book and chapter it comes from. Meanings that predict health, length of life, accidents, marriage, children, money or crime are deliberately left out (see left_out).",
+  "labels": {
+    "Experimental measurement": "A number the AI measured from the 21 hand points. It is real geometry, but the AI's points are joints, not skin creases, and tilting the hand changes it.",
+    "Traditional interpretation": "What an old palmistry book says this feature means. It is cultural literature, not tested science.",
+    "Low confidence": "A traditional meaning matched to your hand in a shaky way: the measurement was close to the cut-off, or the book judged this feature by eye in a way the AI cannot copy."
+  },
+  "sources": {
+    "cheiro": {
+      "short": "Cheiro",
+      "author": "Cheiro (William John Warner, 1866-1936)",
+      "title": "Palmistry for All",
+      "year": 1916,
+      "tradition": "Western palmistry (English, early 20th century)",
+      "url": "https://www.gutenberg.org/ebooks/20480",
+      "note": "Part I covers the lines of the palm; Part II (Cheirognomy) covers the shape of the hand, thumb and fingers."
+    },
+    "dale": {
+      "short": "Dale",
+      "author": "Mrs. J. B. Dale",
+      "title": "Indian Palmistry",
+      "year": 1895,
+      "tradition": "Indian palmistry as retold for English readers, mixed with older European writers (Rothman, Wharton)",
+      "url": "https://www.gutenberg.org/ebooks/52523",
+      "note": "Dale says a palm can only be read for one or two years ahead, and that palmistry only works together with astrology."
+    }
+  },
+  "left_out": [
+    { "topic": "Length of life and health", "detail": "Both books say the life line (and Dale also the head line) shows how long a person will live and which illnesses they will get. There is no evidence for this. A short life line does not mean a short life." },
+    { "topic": "Marriage, children and romance predictions", "detail": "Cheiro has a whole chapter on 'signs relating to marriage', and Dale counts marks on the side of the hand as 'the number of wives' and children. Not included." },
+    { "topic": "Accidents, crime and dark predictions", "detail": "Both books link some marks to accidents, violence or worse. Not included - they are frightening and untested." },
+    { "topic": "Money and luck", "detail": "Many entries promise riches or warn of ruin. Not included." },
+    { "topic": "Prejudice", "detail": "Cheiro ranks hand shapes from 'lowest' to 'highest' and ties them to race and class; both books say harsh things about short thumbs and short fingers. Old books carry the prejudices of their time, so these are not repeated." }
+  ],
+  "lines": [
+    {
+      "id": "heart",
+      "name": "Heart line",
+      "where": "The top one of the three big creases: it runs across the palm just under the fingers, starting at the little-finger side.",
+      "names": { "cheiro": "Line of Heart", "dale": "Table line, which Dale also calls the 'line of Fortune' (she says the English call it the Heart line)" },
+      "questions": [
+        { "id": "length", "text": "How far does it run?", "options": [
+          { "v": "long", "label": "Long - reaches under the index finger" },
+          { "v": "short", "label": "Short - stops under the middle finger" } ] },
+        { "id": "depth", "text": "How clear is it?", "options": [
+          { "v": "deep", "label": "Deep and clear" },
+          { "v": "faint", "label": "Faint or shallow" } ] },
+        { "id": "start", "text": "Where does it end, at the index-finger side?", "options": [
+          { "v": "index", "label": "Under the index finger" },
+          { "v": "between", "label": "Between index and middle finger" },
+          { "v": "middle", "label": "Under the middle finger" },
+          { "v": "forked", "label": "Splits into a fork" } ] }
+      ]
+    },
+    {
+      "id": "head",
+      "name": "Head line",
+      "where": "The middle crease: it starts near the thumb side, between thumb and index finger, and runs across the palm.",
+      "names": { "cheiro": "Line of Head", "dale": "Liver line or 'natural mean' (Dale's 'line of the Head and Brain' is a different, smaller line)" },
+      "questions": [
+        { "id": "shape", "text": "What shape is it?", "options": [
+          { "v": "straight", "label": "Straight across the palm" },
+          { "v": "sloping", "label": "Sloping or curving down" } ] },
+        { "id": "start", "text": "Where it starts, does it touch the life line?", "options": [
+          { "v": "joined", "label": "Joined to the life line" },
+          { "v": "separate", "label": "A small gap - separate" } ] },
+        { "id": "depth", "text": "How clear is it?", "options": [
+          { "v": "deep", "label": "Deep, thin and clear" },
+          { "v": "faint", "label": "Broad or faint" } ] },
+        { "id": "end", "text": "How does it end?", "options": [
+          { "v": "single", "label": "As one line" },
+          { "v": "forked", "label": "In a fork" } ] },
+        { "id": "length", "text": "How long is it?", "options": [
+          { "v": "long", "label": "Long - nearly across the palm" },
+          { "v": "short", "label": "Short - stops mid-palm" } ] }
+      ]
+    },
+    {
+      "id": "life",
+      "name": "Life line",
+      "where": "The curved crease that swings around the base of the thumb.",
+      "names": { "cheiro": "Line of Life", "dale": "Line of Life - though Dale says it 'ought to be called the line of the Heart'" },
+      "questions": [
+        { "id": "curve", "text": "How does it curve?", "options": [
+          { "v": "wide", "label": "A wide curve out into the palm" },
+          { "v": "close", "label": "Stays close to the thumb" } ] },
+        { "id": "depth", "text": "What does it look like?", "options": [
+          { "v": "deep", "label": "Thin, deep and clear" },
+          { "v": "broad", "label": "Broad and shallow" },
+          { "v": "faint", "label": "Faint or made of little pieces" } ] },
+        { "id": "start", "text": "Where does it start?", "options": [
+          { "v": "high", "label": "High, near the index finger" },
+          { "v": "low", "label": "Lower, nearer the thumb" } ] },
+        { "id": "length", "text": "How long is it?", "options": [
+          { "v": "long", "label": "Long - down to the wrist" },
+          { "v": "short", "label": "Short" } ] }
+      ]
+    },
+    {
+      "id": "fate",
+      "name": "Fate line",
+      "where": "A crease running UP the middle of the palm towards the middle finger. Many people have a faint one, or none.",
+      "names": { "cheiro": "Line of Destiny or Fate", "dale": "Line of Saturn - which Dale ALSO calls the 'line of Fortune', the same name she gives the heart line" },
+      "questions": [
+        { "id": "presence", "text": "Can you see it?", "options": [
+          { "v": "clear", "label": "Yes, clearly" },
+          { "v": "faint", "label": "Only faintly" },
+          { "v": "none", "label": "No fate line" } ] },
+        { "id": "start", "text": "Where does it start?", "options": [
+          { "v": "lifeline", "label": "From the life line" },
+          { "v": "wrist", "label": "Straight up from the wrist" },
+          { "v": "moon", "label": "From the little-finger side of the palm" },
+          { "v": "middle", "label": "Only from the middle of the palm" } ] },
+        { "id": "length", "text": "How far does it go?", "options": [
+          { "v": "long", "label": "All the way up to the middle finger" },
+          { "v": "short", "label": "Stops part-way" } ] },
+        { "id": "double", "text": "Is it double?", "options": [
+          { "v": "yes", "label": "Yes - two lines side by side" },
+          { "v": "no", "label": "No" } ] }
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "id": "heart-long", "feature": "Heart line", "variation": "long",
+      "match": { "line": "heart", "q": "length", "v": "long" },
+      "relation": "differ",
+      "relation_note": "The two books do not even agree what this line is about: for Cheiro it shows the feelings, for Dale it shows steadiness.",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. VII 'The Line of Heart'", "meaning": "very strong feelings",
+          "text": "Cheiro read a very long heart line as feelings that run strong and deep - and warned that such strong feelings can tip over into jealousy." },
+        { "source": "dale", "where": "'The Line of Fortune' (her Table line)", "meaning": "constancy",
+          "text": "Dale read a long, unbroken Table line as constancy: someone steady and dependable." }
+      ]
+    },
+    {
+      "id": "heart-short", "feature": "Heart line", "variation": "short",
+      "match": { "line": "heart", "q": "length", "v": "short" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. VII 'The Line of Heart'", "meaning": "keeps feelings private",
+          "text": "Cheiro wrote that the shorter the heart line, the less a person shows tender, sentimental feelings - someone who keeps their feelings to themselves." }
+      ]
+    },
+    {
+      "id": "heart-deep", "feature": "Heart line", "variation": "deep",
+      "match": { "line": "heart", "q": "depth", "v": "deep" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. VII 'The Line of Heart'", "meaning": "a warm, affectionate nature",
+          "text": "Cheiro said the heart line 'should be deep, clear, and well coloured' - his picture of a warm and affectionate nature." }
+      ]
+    },
+    {
+      "id": "heart-faint", "feature": "Heart line", "variation": "faint",
+      "match": { "line": "heart", "q": "depth", "v": "faint" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. VII 'The Line of Heart'", "meaning": "a cool, easy-going attitude to feelings",
+          "text": "Cheiro linked a pale, shallow heart line with a cooler, more easy-going attitude to feelings." }
+      ]
+    },
+    {
+      "id": "heart-start-index", "feature": "Heart line", "variation": "ends under the index finger",
+      "match": { "line": "heart", "q": "start", "v": "index" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. VII 'The Line of Heart'", "meaning": "loyal and idealistic",
+          "text": "Rising from the middle of the mound under the index finger, Cheiro said, shows someone loyal and idealistic, firm in their affections and with a high sense of honour." }
+      ]
+    },
+    {
+      "id": "heart-start-between", "feature": "Heart line", "variation": "ends between index and middle finger",
+      "match": { "line": "heart", "q": "start", "v": "between" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. VII 'The Line of Heart'", "meaning": "calm but deep affection",
+          "text": "Cheiro described a calm but very deep nature: not showy, but ready to do a great deal for the people they care about." }
+      ]
+    },
+    {
+      "id": "heart-start-middle", "feature": "Heart line", "variation": "ends under the middle finger",
+      "match": { "line": "heart", "q": "start", "v": "middle" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. VII 'The Line of Heart'", "meaning": "reserved in affection",
+          "text": "Cheiro read this as a reserved, undemonstrative nature in matters of affection." }
+      ]
+    },
+    {
+      "id": "heart-forked", "feature": "Heart line", "variation": "forked",
+      "match": { "line": "heart", "q": "start", "v": "forked" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. VII 'The Line of Heart'", "meaning": "balanced and affectionate",
+          "text": "A fork with one branch under the index finger and one between the first two fingers was, for Cheiro, the sign of a well-balanced, happy and affectionate disposition." }
+      ]
+    },
+    {
+      "id": "head-straight", "feature": "Head line", "variation": "straight",
+      "match": { "line": "head", "q": "shape", "v": "straight" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. II 'The Line of Head'", "meaning": "practical and level-headed",
+          "text": "Cheiro called a head line lying straight across the palm 'level-headed': practical and logical, someone who plans with facts." }
+      ]
+    },
+    {
+      "id": "head-sloping", "feature": "Head line", "variation": "sloping",
+      "match": { "line": "head", "q": "shape", "v": "sloping" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. II 'The Line of Head'", "meaning": "imaginative",
+          "text": "A gentle downward curve, Cheiro wrote, shows imagination that a person uses when they choose to - he found it often on the hands of artists and painters." }
+      ]
+    },
+    {
+      "id": "head-joined", "feature": "Head line", "variation": "joined to the life line",
+      "match": { "line": "head", "q": "start", "v": "joined" },
+      "relation": "disagree",
+      "relation_note": "Same feature, opposite flavour: careful and unsure of themselves (Cheiro) or quick-witted and even-tempered (Dale).",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. II 'The Line of Head joined to the Line of Life'", "meaning": "sensitive and careful",
+          "text": "Cheiro read it as a sensitive, careful person who tends to underrate their own talents." },
+        { "source": "dale", "where": "'The Line of Life'", "meaning": "quick wit and even temper",
+          "text": "Dale read a life line meeting the Liver (head) line in a neat angle as good wit and an even temper - a sharp, quick person." }
+      ]
+    },
+    {
+      "id": "head-separate", "feature": "Head line", "variation": "separate from the life line",
+      "match": { "line": "head", "q": "start", "v": "separate" },
+      "relation": "disagree",
+      "relation_note": "Dale's book reads a separated start completely differently, as a claim about family and marriage that this app does not repeat.",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. II 'The Line of Head separated from the Line of Life'", "meaning": "independent thinker",
+          "text": "A small gap at the start meant, for Cheiro, independent thinking, quick judgement and a certain daring - people who do best when they have a clear purpose." }
+      ]
+    },
+    {
+      "id": "head-deep", "feature": "Head line", "variation": "deep and clear",
+      "match": { "line": "head", "q": "depth", "v": "deep" },
+      "relation": "agree",
+      "relation_note": "Both books see a clear head line as a good sign, but for different qualities.",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. II 'The Line of Head'", "meaning": "strong concentration",
+          "text": "Cheiro said a clean, deep, thin head line shows strong concentration, and that great 'brain workers' usually have one." },
+        { "source": "dale", "where": "'The Liver Line'", "meaning": "cheerful and inventive",
+          "text": "Dale wrote that a well-drawn Liver line of a good clear colour is the sign of a cheerful and ingenious disposition." }
+      ]
+    },
+    {
+      "id": "head-faint", "feature": "Head line", "variation": "broad or faint",
+      "match": { "line": "head", "q": "depth", "v": "faint" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. II 'The Line of Head'", "meaning": "a changeable mind",
+          "text": "Cheiro thought a broad, shallow head line meant a mind that likes to change direction rather than stay on one track." }
+      ]
+    },
+    {
+      "id": "head-forked", "feature": "Head line", "variation": "forked end",
+      "match": { "line": "head", "q": "end", "v": "forked" },
+      "relation": "disagree",
+      "relation_note": "Dale reads a fork towards the little-finger side as a bad sign, so the two books clash here. Her meaning is not repeated.",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. II 'The Line of Head'", "meaning": "practical and imaginative",
+          "text": "Cheiro saw a forked head line as a mind balanced between the practical and the imaginative - and advised such people to trust their first impulse instead of weighing both sides for too long." }
+      ]
+    },
+    {
+      "id": "head-length", "feature": "Head line", "variation": "long or short",
+      "match": { "line": "head", "q": "length", "v": ["long", "short"] },
+      "withheld": true,
+      "withheld_note": "Dale ties the length of her Liver (head) line to the length of life. This app never repeats that, and there is no evidence for it."
+    },
+    {
+      "id": "life-wide", "feature": "Life line", "variation": "wide curve",
+      "match": { "line": "life", "q": "curve", "v": "wide" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. III 'The Line of Life'", "meaning": "lots of energy",
+          "text": "A life line sweeping in a wide curve out into the palm was, for Cheiro, a sign of strong energy and warmth towards people." }
+      ]
+    },
+    {
+      "id": "life-close", "feature": "Life line", "variation": "close to the thumb",
+      "match": { "line": "life", "q": "curve", "v": "close" },
+      "withheld": true,
+      "withheld_note": "Cheiro links this curve to a person's health. This app leaves that out."
+    },
+    {
+      "id": "life-deep", "feature": "Life line", "variation": "thin, deep and clear",
+      "match": { "line": "life", "q": "depth", "v": "deep" },
+      "relation": "disagree",
+      "relation_note": "The books disagree on which kind of life line is 'better': Cheiro prefers thin and deep, Dale prefers broad. Dale's reason is about health, so it is not repeated.",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. III 'The Line of Life'", "meaning": "will-power",
+          "text": "Cheiro valued a thin, deep, clear life line above a broad one: to him it showed nerve and will-power rather than muscle." }
+      ]
+    },
+    {
+      "id": "life-broad", "feature": "Life line", "variation": "broad and shallow",
+      "match": { "line": "life", "q": "depth", "v": "broad" },
+      "relation": "disagree",
+      "relation_note": "Dale thinks a broad life line is the best kind; Cheiro thinks a thin, deep one is better. Dale's reason is about health, so it is not repeated.",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. III 'The Line of Life'", "meaning": "physical strength",
+          "text": "Cheiro read a broad life line as more physical, muscular strength than will-power - someone at home in an active, outdoor life." }
+      ]
+    },
+    {
+      "id": "life-faint", "feature": "Life line", "variation": "faint or in pieces",
+      "match": { "line": "life", "q": "depth", "v": "faint" },
+      "withheld": true,
+      "withheld_note": "Both books read a faint or broken life line as a health warning. This app leaves that out. A faint line is just a faint crease."
+    },
+    {
+      "id": "life-high", "feature": "Life line", "variation": "starts high",
+      "match": { "line": "life", "q": "start", "v": "high" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. III 'The Line of Life'", "meaning": "self-control and ambition",
+          "text": "A life line starting high, near the index finger, meant to Cheiro more self-control and a life guided by ambition." }
+      ]
+    },
+    {
+      "id": "life-low", "feature": "Life line", "variation": "starts low",
+      "match": { "line": "life", "q": "start", "v": "low" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. III 'The Line of Life'", "meaning": "a quick temper",
+          "text": "Cheiro thought a life line starting lower, nearer the thumb, went with less control over the temper." }
+      ]
+    },
+    {
+      "id": "life-length", "feature": "Life line", "variation": "long or short",
+      "match": { "line": "life", "q": "length", "v": ["long", "short"] },
+      "withheld": true,
+      "withheld_note": "Both books claim the life line's length shows how long a person will live. That is not true, and this app never says it. A short life line does NOT mean a short life."
+    },
+    {
+      "id": "fate-clear", "feature": "Fate line", "variation": "clear",
+      "match": { "line": "fate", "q": "presence", "v": "clear" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. V 'The Line of Destiny or Fate'", "meaning": "a clear sense of direction",
+          "text": "Cheiro liked a fate line that is clear and distinct but not too heavy - a person with a clear sense of where they are going." }
+      ]
+    },
+    {
+      "id": "fate-faint", "feature": "Fate line", "variation": "faint",
+      "match": { "line": "fate", "q": "presence", "v": "faint" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. V 'The Line of Destiny or Fate'", "meaning": "makes their own path",
+          "text": "A very faint fate line, said Cheiro, belongs to people who do not believe in fate at all - they make their own way with their own minds." }
+      ]
+    },
+    {
+      "id": "fate-none", "feature": "Fate line", "variation": "none",
+      "match": { "line": "fate", "q": "presence", "v": "none" },
+      "withheld": true,
+      "withheld_note": "Both books are gloomy about a missing fate line. This app leaves that out - lots of people have no clear fate line at all."
+    },
+    {
+      "id": "fate-from-life", "feature": "Fate line", "variation": "starts from the life line",
+      "match": { "line": "fate", "q": "start", "v": "lifeline" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. V 'Rising from the Line of Life'", "meaning": "success by own effort",
+          "text": "Cheiro read a fate line growing out of the life line as someone who wins things by their own effort and merit, not by luck." }
+      ]
+    },
+    {
+      "id": "fate-from-wrist", "feature": "Fate line", "variation": "starts at the wrist",
+      "match": { "line": "fate", "q": "start", "v": "wrist" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. V 'Rising from the Wrist'", "meaning": "a smooth, well-favoured path",
+          "text": "A fate line running straight up from the wrist was, for Cheiro, the sign of a smooth and well-favoured path through life - especially, he said, when a clear Sun line goes with it." }
+      ]
+    },
+    {
+      "id": "fate-from-moon", "feature": "Fate line", "variation": "starts on the little-finger side",
+      "match": { "line": "fate", "q": "start", "v": "moon" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. V 'Rising from the Mount of the Moon'", "meaning": "an eventful path",
+          "text": "Starting from the little-finger side (the 'Mount of the Moon'), Cheiro said, a fate line shows an eventful, changing path, shaped a lot by the people around you." }
+      ]
+    },
+    {
+      "id": "fate-from-middle", "feature": "Fate line", "variation": "starts mid-palm",
+      "match": { "line": "fate", "q": "start", "v": "middle" },
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. V 'Rising from the Middle of the Palm'", "meaning": "hard-working and self-made",
+          "text": "A fate line that only begins in the middle of the palm meant, for Cheiro, a hard-working person who builds their own success step by step." }
+      ]
+    },
+    {
+      "id": "fate-long", "feature": "Fate line", "variation": "reaches the middle finger",
+      "match": { "line": "fate", "q": "length", "v": "long" },
+      "relation": "single",
+      "readings": [
+        { "source": "dale", "where": "'The Line of Saturn'", "meaning": "a deep thinker",
+          "text": "Dale wrote that a Saturn (fate) line running all the way up to the middle finger shows deep thinking and good judgement in giving advice." }
+      ]
+    },
+    {
+      "id": "fate-short", "feature": "Fate line", "variation": "short",
+      "match": { "line": "fate", "q": "length", "v": "short" },
+      "withheld": true,
+      "withheld_note": "Dale calls a short Saturn line a sign of misfortune. This app leaves that out."
+    },
+    {
+      "id": "fate-double", "feature": "Fate line", "variation": "double",
+      "match": { "line": "fate", "q": "double", "v": "yes" },
+      "relation": "differ",
+      "relation_note": "Same mark, two different stories: two careers (Cheiro) or helping others more than yourself (Dale).",
+      "readings": [
+        { "source": "cheiro", "where": "Part I, Ch. V 'Double Lines of Fate'", "meaning": "two careers at once",
+          "text": "Cheiro read a clearly double fate line as two careers carried on together - perhaps one main one and one hobby." },
+        { "source": "dale", "where": "'The Lines' (line of Fortune or Saturn)", "meaning": "helps others",
+          "text": "Dale wrote that when this line doubles in the middle of the palm, 'you do more good to others than yourself'." }
+      ]
+    },
+    {
+      "id": "palm-square", "feature": "Palm shape", "variation": "square",
+      "match": { "measure": "palmShape", "op": ">=", "value": 0.76, "margin": 0.03 },
+      "measure_label": "palm width ÷ palm length",
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. I 'The Square Type'", "meaning": "practical and methodical",
+          "text": "Cheiro's 'square' hand, with a palm about as wide as it is long, belongs to practical, logical people - careful, methodical workers who believe things when they see proof." }
+      ]
+    },
+    {
+      "id": "palm-long", "feature": "Palm shape", "variation": "long",
+      "match": { "measure": "palmShape", "op": "<=", "value": 0.68, "margin": 0.03 },
+      "measure_label": "palm width ÷ palm length",
+      "stretch": "Cheiro sorts long hands into several types using knotty joints and pointed or square fingertips, which the AI cannot see.",
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. I 'The Philosophic Hand' and 'The Conic or Artistic Hand'", "meaning": "studious or artistic",
+          "text": "In Cheiro's book, long hands belong to the studious 'philosophic' type and the artistic 'conic' type - people drawn to books, ideas, music and beautiful things." }
+      ]
+    },
+    {
+      "id": "fingers-long", "feature": "Finger length", "variation": "long for the palm",
+      "match": { "measure": "fingerPalm", "op": ">=", "value": 1.05, "margin": 0.03 },
+      "measure_label": "middle finger ÷ palm length",
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. III 'The Fingers'", "meaning": "a love of thinking",
+          "text": "Cheiro wrote that fingers long in proportion to the palm show a love of thinking and ideas." }
+      ]
+    },
+    {
+      "id": "fingers-short", "feature": "Finger length", "variation": "short for the palm",
+      "match": { "measure": "fingerPalm", "op": "<=", "value": 0.95, "margin": 0.03 },
+      "measure_label": "middle finger ÷ palm length",
+      "relation": "disagree",
+      "stretch": "Dale speaks of short hands; the AI measures finger length against the palm.",
+      "relation_note": "Cheiro was harsh about short fingers; Dale was kinder. Cheiro's view is not repeated.",
+      "readings": [
+        { "source": "dale", "where": "'A Summary of Judgment'", "meaning": "quick decisions",
+          "text": "Dale wrote that short hands go with quick judgement - deciding on instinct rather than long analysis." }
+      ]
+    },
+    {
+      "id": "index-longer", "feature": "Index finger (Jupiter) vs ring finger (Sun)", "variation": "index finger longer",
+      "match": { "measure": "indexRing", "op": ">=", "value": 0.97, "margin": 0.02 },
+      "measure_label": "index finger ÷ ring finger",
+      "stretch": "Cheiro compared how far the fingertips reach; the AI measures each finger from its knuckle joint.",
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. III 'The Fingers'", "meaning": "likes to lead",
+          "text": "Cheiro called the index finger the 'finger of Jupiter': when long, it shows someone who likes to lead and take charge." }
+      ]
+    },
+    {
+      "id": "ring-longer", "feature": "Index finger (Jupiter) vs ring finger (Sun)", "variation": "ring finger longer",
+      "match": { "measure": "indexRing", "op": "<=", "value": 0.93, "margin": 0.02 },
+      "measure_label": "index finger ÷ ring finger",
+      "stretch": "Cheiro compared how far the fingertips reach; the AI measures each finger from its knuckle joint.",
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. III 'The Fingers'", "meaning": "loves beautiful things",
+          "text": "Cheiro called the ring finger the 'finger of the Sun': when long, it shows a love of beautiful things and art - and a wish to be noticed for it." }
+      ]
+    },
+    {
+      "id": "thumb-long", "feature": "Thumb", "variation": "long",
+      "match": { "measure": "thumbIndex", "op": ">=", "value": 1.2, "margin": 0.04 },
+      "measure_label": "thumb ÷ index finger",
+      "stretch": "Cheiro judged the thumb's length by eye, mostly its top part; the AI measures the whole thumb from its base joint.",
+      "relation": "single",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. II 'The Thumb'", "meaning": "strong will-power",
+          "text": "For Cheiro the thumb stands for will-power: the longer it is, the stronger the will." }
+      ]
+    },
+    {
+      "id": "thumb-short", "feature": "Thumb", "variation": "short",
+      "match": { "measure": "thumbIndex", "op": "<=", "value": 1.05, "margin": 0.04 },
+      "measure_label": "thumb ÷ index finger",
+      "withheld": true,
+      "withheld_note": "Cheiro writes very harshly about short thumbs. That is prejudice, not knowledge, so it is not repeated."
+    },
+    {
+      "id": "thumb-wide", "feature": "Thumb held out", "variation": "wide",
+      "match": { "measure": "thumbAngle", "op": ">=", "value": 35, "margin": 6 },
+      "measure_label": "angle between thumb and index finger (degrees)",
+      "relation": "differ",
+      "relation_note": "One feature, two meanings: independence (Cheiro) or generosity (Dale).",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. III 'The Fingers'", "meaning": "independent and fearless",
+          "text": "Cheiro wrote that a wide space between thumb and index finger shows independence of will and fearlessness." },
+        { "source": "dale", "where": "'A Summary of Judgment'", "meaning": "generous",
+          "text": "Dale wrote that a thumb leaning outwards, away from the hand, shows generosity." }
+      ]
+    },
+    {
+      "id": "gap-index-middle", "feature": "Gap between index and middle finger", "variation": "wide",
+      "match": { "measure": "gapIndexMiddle", "op": ">=", "value": 10, "margin": 3 },
+      "measure_label": "angle between index and middle finger (degrees)",
+      "relation": "agree",
+      "relation_note": "Here the two books agree.",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. III 'The Fingers'", "meaning": "independent thinking",
+          "text": "Cheiro: a wide space between the first and second fingers shows independence of thought." },
+        { "source": "dale", "where": "'A Summary of Judgment'", "meaning": "independent thinking",
+          "text": "Dale: when the open hand shows the first and second fingers far apart, it 'denotes independence of thought'." }
+      ]
+    },
+    {
+      "id": "gap-ring-little", "feature": "Gap between ring and little finger", "variation": "wide",
+      "match": { "measure": "gapRingLittle", "op": ">=", "value": 10, "margin": 3 },
+      "measure_label": "angle between ring and little finger (degrees)",
+      "relation": "agree",
+      "relation_note": "Here the two books agree.",
+      "readings": [
+        { "source": "cheiro", "where": "Part II, Ch. III 'The Fingers'", "meaning": "independent action",
+          "text": "Cheiro: a wide space between the third and fourth fingers shows independence of action." },
+        { "source": "dale", "where": "'A Summary of Judgment'", "meaning": "independent action",
+          "text": "Dale agrees: a wide gap here means independence of action - and if both gaps are wide, originality and self-reliance." }
+      ]
+    }
+  ]
+}
