@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RUNNING</title>
+<style>body{font:15px/1.5 monospace;padding:12px;background:#fff;color:#111}.f{color:#b00;font-weight:bold}</style>
+</head>
+<body>
+<h1>AI Palm Lab self-test</h1>
+<p>Open <code>tests/selftest.html</code> from a local server. Add <code>?img=fixtures/right_palm.png</code>
+  to also run the real AI on a photo of a RIGHT palm (and a mirrored copy, which must read LEFT).</p>
+<pre id="out"></pre>
+<script type="module">
+import { measureHand, realHandedness, summarize, angleBetween, toPixels } from "../js/measure.js";
+import { westernSign, birthNumber, chineseAnimal, fullReading, SIGNS, ELEMENT_PREDICTS } from "../js/reading.js";
+import { compare, readTally, addToTally, chanceRange, verdict } from "../js/experiment.js";
+
+const out = document.getElementById("out");
+let fails = 0;
+function check(name, ok, detail = "") {
+  out.innerHTML += (ok ? "ok    " : '<span class="f">FAIL  </span>') + name + (detail ? "  [" + detail + "]" : "") + "\n";
+  if (!ok) fails++;
+}
+const near = (a, b, tol = 1e-6) => Math.abs(a - b) <= tol;
+
+// ---------- measurement maths on a hand drawn by hand (pixel units 100x100)
+out.innerHTML += "-- measure.js\n";
+const P = Array.from({ length: 21 }, () => ({ x: 0.5, y: 0.5 }));
+const set = (i, x, y) => { P[i] = { x: x / 100, y: y / 100 }; };
+set(0, 50, 90);                                   // wrist
+[1, 2, 3, 4].forEach((i, k) => set(i, 70 + k * 5, 80 - k * 5));      // thumb, 3 steps of ~7.07
+[5, 6, 7, 8].forEach((i, k) => set(i, 40, 50 - k * 10));             // index straight up: 30 long
+[9, 10, 11, 12].forEach((i, k) => set(i, 50, 50 - k * 13.333333));   // middle: tip at y=10
+[13, 14, 15, 16].forEach((i, k) => set(i, 60, 50 - k * 12));         // ring: 36 long
+[17, 18, 19, 20].forEach((i, k) => set(i, 70, 50 - k * 8));          // little finger straight up
+const m = measureHand(P, 100, 100);
+check("palm width / hand length = 30/80", near(m.palmRatio, 30 / 80, 1e-4), m.palmRatio.toFixed(4));
+check("index / ring = 30/36", near(m.indexRing, 30 / 36, 1e-4), m.indexRing.toFixed(4));
+check("thumb / hand = 3*7.071/80", near(m.thumbRatio, (3 * Math.hypot(5, 5)) / 80, 1e-4), m.thumbRatio.toFixed(4));
+check("parallel fingers = 0 degree spread", near(m.spread, 0, 1e-6), m.spread.toFixed(3));
+check("right angle = 90 degrees", near(angleBetween({x:0,y:0},{x:1,y:0},{x:0,y:0},{x:0,y:1}), 90, 1e-9));
+const wide = toPixels([{ x: 0.5, y: 0.5 }], 1280, 720)[0];
+check("fractions become pixels (wide picture)", wide.x === 640 && wide.y === 360);
+const m2 = measureHand(P.map((p) => ({ x: p.x * 0.5 + 0.2, y: p.y * 0.5 + 0.1 })), 100, 100);
+check("ratios ignore distance from the camera (hand half the size)", near(m2.palmRatio, m.palmRatio, 1e-9) && near(m2.indexRing, m.indexRing, 1e-9));
+check("hand names pass through; anything else is Unknown", realHandedness("Left") === "Left" && realHandedness("Right") === "Right" && realHandedness(undefined) === "Unknown");
+const s = summarize([1, 1, 1, 1]);
+check("no wobble on identical readings", s.wobblePct === 0 && s.mean === 1);
+check("wobble % = spread / average", near(summarize([9, 11]).wobblePct, 10, 1e-9));
+
+// ---------- the cultural reading arithmetic
+out.innerHTML += "-- reading.js\n";
+const cases = [[1, 1, "Capricorn"], [1, 19, "Capricorn"], [1, 20, "Aquarius"], [2, 18, "Aquarius"], [2, 19, "Pisces"],
+  [3, 20, "Pisces"], [3, 21, "Aries"], [4, 20, "Taurus"], [5, 21, "Gemini"], [6, 21, "Cancer"], [7, 22, "Cancer"],
+  [7, 23, "Leo"], [8, 23, "Virgo"], [9, 23, "Libra"], [10, 23, "Scorpio"], [11, 21, "Scorpio"], [11, 22, "Sagittarius"],
+  [12, 21, "Sagittarius"], [12, 22, "Capricorn"], [12, 31, "Capricorn"]];
+const wrong = cases.filter(([mo, d, n]) => westernSign(mo, d).name !== n);
+check("zodiac borders (20 dates)", wrong.length === 0, wrong.map((w) => w.join("/")).join(" "));
+let everyDay = true;
+for (let mo = 1; mo <= 12; mo++) for (let d = 1; d <= 31; d++) if (!westernSign(mo, d)) everyDay = false;
+check("every day of the year has a sign", everyDay);
+check("12 signs, 3 per element", SIGNS.length === 12 && Object.keys(ELEMENT_PREDICTS).every((e) => SIGNS.filter((x) => x.element === e).length === 3));
+check("birth number 2012-03-14 -> 13 -> 4", birthNumber(2012, 3, 14) === 4);
+check("birth number 1999-12-31 -> 35 -> 8", birthNumber(1999, 12, 31) === 8);
+check("birth number always 1..9", [[2000, 1, 1], [1988, 8, 8], [2013, 9, 9]].every(([y, mo, d]) => { const n = birthNumber(y, mo, d); return n >= 1 && n <= 9; }));
+check("2020 is a Rat year", chineseAnimal(2020, 6, 1).animal.name === "Rat");
+check("2013 is a Snake year", chineseAnimal(2013, 6, 1).animal.name === "Snake");
+check("2026 is a Horse year", chineseAnimal(2026, 6, 1).animal.name === "Horse");
+check("before 21 January: still last year's animal", chineseAnimal(2013, 1, 10).animal.name === "Dragon" && !chineseAnimal(2013, 1, 10).maybe);
+check("late January / early February: says it may be last year's", chineseAnimal(2013, 2, 5).maybe.name === "Dragon");
+const r = fullReading("2012-08-15");
+check("full reading", r.sign.name === "Leo" && r.number === 1 && r.chinese.animal.name === "Dragon" && r.predicts.energy === "energetic");
+const banned = /death|die|illness|disease|accident|money|loss|marriage|marry|exam|fail/i;
+const allText = SIGNS.map((x) => x.text).join(" ") + JSON.stringify((await import("../js/reading.js")).NUMBERS) +
+  (await import("../js/reading.js")).ANIMALS.map((a) => a.text).join(" ");
+check("no frightening or forbidden topics in any reading", !banned.test(allText), (allText.match(banned) || [""])[0]);
+
+// ---------- the experiment
+out.innerHTML += "-- experiment.js\n";
+const c = compare({ subject: "logical", energy: "calm", work: "group" }, ELEMENT_PREDICTS.Earth);
+check("compare: 2 of 3 match for an Earth sign", c.matches === 2 && c.total === 3);
+const mem = { d: {}, getItem(k) { return this.d[k] ?? null; }, setItem(k, v) { this.d[k] = v; }, removeItem(k) { delete this.d[k]; } };
+check("empty tally", readTally(mem).visitors === 0);
+addToTally(c, mem); const t = addToTally({ matches: 1, total: 3 }, mem);
+check("tally adds up", t.visitors === 2 && t.answers === 6 && t.matches === 3);
+const broken = { getItem() { throw new Error("blocked"); }, setItem() { throw new Error("blocked"); } };
+check("blocked storage does not crash", readTally(broken).visitors === 0 && addToTally(c, broken).visitors === 1);
+const cr = chanceRange(100);
+check("chance range for 100 answers ~ 40-60%", near(cr.low, 40.2, 0.1) && near(cr.high, 59.8, 0.1), cr.low.toFixed(1) + "-" + cr.high.toFixed(1));
+check("verdict waits for 30 answers", verdict({ answers: 12, matches: 12 }).startsWith("Too few"));
+check("verdict: 52/100 is inside chance", verdict({ answers: 100, matches: 52 }).includes("INSIDE"));
+check("verdict: 70/100 is above chance", verdict({ answers: 100, matches: 70 }).includes("ABOVE"));
+
+// ---------- the real AI on a real photo (optional)
+const img = new URLSearchParams(location.search).get("img");
+if (img) {
+  out.innerHTML += "-- MediaPipe on " + img + "\n";
+  const { detectImage } = await import("../js/scan.js");
+  const el = new Image();
+  el.src = img;
+  await el.decode();
+  const res = await detectImage(el);
+  const lms = res.landmarks[0];
+  check("a hand is found", !!lms);
+  if (lms) {
+    check("21 landmarks", lms.length === 21);
+    const name = realHandedness(res.handedness[0][0].categoryName);
+    check("the RIGHT palm reads Right", name === "Right", name + " " + Math.round(res.handedness[0][0].score * 100) + "%");
+    const mm = measureHand(lms, el.naturalWidth, el.naturalHeight);
+    check("ratios are sensible for a real hand", mm.palmRatio > 0.25 && mm.palmRatio < 0.6 && mm.indexRing > 0.8 && mm.indexRing < 1.15 && mm.thumbRatio > 0.2 && mm.thumbRatio < 0.7,
+      `palm ${mm.palmRatio.toFixed(2)} index/ring ${mm.indexRing.toFixed(2)} thumb ${mm.thumbRatio.toFixed(2)} spread ${mm.spread.toFixed(0)}deg`);
+    // mirror the picture: a right palm seen in a mirror is a left palm
+    const cv = document.createElement("canvas");
+    cv.width = el.naturalWidth; cv.height = el.naturalHeight;
+    const g = cv.getContext("2d"); g.translate(cv.width, 0); g.scale(-1, 1); g.drawImage(el, 0, 0);
+    const res2 = await detectImage(cv);
+    const name2 = res2.landmarks[0] ? realHandedness(res2.handedness[0][0].categoryName) : "none";
+    check("the mirrored picture reads Left", name2 === "Left", name2);
+    if (res2.landmarks[0]) {
+      const m3 = measureHand(res2.landmarks[0], cv.width, cv.height);
+      // the AI itself is not perfectly consistent - a few % between a picture and its mirror image
+      check("mirroring changes the ratios by under 5%", Math.abs(m3.palmRatio / mm.palmRatio - 1) < 0.05 && Math.abs(m3.indexRing / mm.indexRing - 1) < 0.05,
+        `palm ${m3.palmRatio.toFixed(3)} vs ${mm.palmRatio.toFixed(3)}, index/ring ${m3.indexRing.toFixed(3)} vs ${mm.indexRing.toFixed(3)}`);
+    }
+  }
+}
+
+out.innerHTML += fails ? `\n${fails} FAILED\n` : "\nALL PASS\n";
+document.title = fails ? "FAIL" : "PASS";
+</script>
+</body>
+</html>

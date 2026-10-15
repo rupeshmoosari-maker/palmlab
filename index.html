@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5b2bd6">
+<meta name="description" content="Explore what AI can measure in your hand - and test traditional palmistry claims. A Class 8 science project.">
+<title>AI Palm Lab: Science or Story?</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="iconbtn" id="homeBtn" aria-label="Home" hidden>🏠</button>
+  <span class="brand">🖐️ AI Palm Lab</span>
+  <button class="pill" id="resetBtn">🔄 New Visitor</button>
+</header>
+
+<main>
+
+<!-- ============================== HOME ============================== -->
+<section id="home" class="screen">
+  <h1>AI Palm Lab</h1>
+  <p class="sub">Science or Story?</p>
+  <p class="lead">Explore what AI can measure in your hand - and test traditional palmistry claims.</p>
+  <div class="bigbtns">
+    <a class="big science" href="#scan"><b class="ic">🔬</b><span>Scientific Hand Scan</span><small>AI measures your hand</small></a>
+    <a class="big story" href="#reading"><b class="ic">✨</b><span>Fun Cultural Reading</span><small>Star sign, number &amp; animal</small></a>
+    <a class="big test" href="#experiment"><b class="ic">🧪</b><span>Mini Experiment</span><small>Does the reading match you?</small></a>
+    <a class="big learn" href="#learn"><b class="ic">📚</b><span>Learn</span><small>How it works &amp; why</small></a>
+  </div>
+</section>
+
+<!-- ============================== SCAN ============================== -->
+<section id="scan" class="screen" hidden>
+  <h2>🔬 Scientific Hand Scan</h2>
+  <p class="privacy">🔒 <b>No photo is saved.</b> The camera picture stays inside this phone and is thrown away
+    straight after the AI looks at it. Nothing is uploaded.</p>
+
+  <div id="camHelp" class="note warn" hidden></div>
+
+  <div class="stage" id="stage">
+    <video id="video" playsinline muted autoplay></video>
+    <canvas id="overlay"></canvas>
+    <svg id="guide" class="guide" viewBox="0 0 200 260" aria-hidden="true">
+      <g fill="#fff" opacity=".28">
+        <rect x="48" y="118" width="104" height="120" rx="34"/>
+        <rect x="50" y="52" width="24" height="96" rx="12"/>
+        <rect x="78" y="30" width="24" height="110" rx="12"/>
+        <rect x="106" y="40" width="24" height="104" rx="12"/>
+        <rect x="134" y="66" width="22" height="84" rx="11"/>
+        <rect x="18" y="128" width="24" height="76" rx="12" transform="rotate(-38 30 166)"/>
+      </g>
+    </svg>
+    <div class="stagemsg" id="stageMsg">Tap <b>Start camera</b>, then show an open palm inside the outline.</div>
+  </div>
+
+  <div class="status" id="scanStatus" aria-live="polite"></div>
+
+  <div class="row">
+    <button class="btn primary" id="startCam">📷 Start camera</button>
+    <button class="btn" id="flipCam" hidden>🔁 Switch camera</button>
+  </div>
+  <div class="row">
+    <button class="btn primary" id="captureBtn" disabled>📸 Capture Reading</button>
+    <button class="btn" id="repeatBtn" disabled>🔁 Repeat test (5 scans)</button>
+  </div>
+
+  <p class="note">These are <b>geometric measurements</b>, not medical or personality diagnoses.</p>
+
+  <div id="scanResults" hidden>
+    <h3>Your hand in numbers</h3>
+    <div class="cards" id="measureCards"></div>
+    <div class="diagramwrap">
+      <svg id="handDiagram" viewBox="0 0 240 280" role="img" aria-label="Diagram of the 21 hand points"></svg>
+      <p class="small">The 21 points the AI found. No photo - just dots and lines.</p>
+    </div>
+  </div>
+
+  <div id="repeatBox" class="panel" hidden>
+    <h3>🔁 Repeat test: is the AI steady?</h3>
+    <p class="small">Scientists measure the same thing several times. If the numbers jump around,
+      the measuring tool is not very precise. Keep the same hand in front of the camera.</p>
+    <div id="repeatProgress" class="status"></div>
+    <div class="tablewrap"><table id="repeatTable"></table></div>
+    <p id="repeatVerdict" class="note"></p>
+  </div>
+
+  <div id="rulerBox" class="panel" hidden>
+    <h3>📏 Ruler check: AI vs ruler</h3>
+    <p class="small">Measure the same hand with a ruler. <b>Hand length</b> = wrist crease to the tip of the
+      middle finger. <b>Palm width</b> = across the knuckles from the index finger to the little finger.</p>
+    <div class="formrow">
+      <label>Hand length (cm)<input id="rulerLen" type="number" inputmode="decimal" min="5" max="30" step="0.1"></label>
+      <label>Palm width (cm)<input id="rulerWid" type="number" inputmode="decimal" min="3" max="15" step="0.1"></label>
+    </div>
+    <button class="btn" id="rulerBtn">Compare</button>
+    <p id="rulerOut" class="note"></p>
+  </div>
+</section>
+
+<!-- ============================== READING ============================== -->
+<section id="reading" class="screen" hidden>
+  <h2>✨ Fun Cultural Reading</h2>
+  <p class="lead">Traditions like astrology and numerology link your birthday to personality. Let's see what they say!</p>
+  <label class="datelabel">Your date of birth
+    <input type="date" id="dob" min="1920-01-01">
+  </label>
+  <button class="btn primary wide" id="readBtn">Show my reading</button>
+  <div id="readingOut" hidden>
+    <p class="warnbanner">⚠️ Traditional interpretation only. Not scientifically validated.</p>
+    <div class="cards" id="readingCards"></div>
+    <a class="btn wide" href="#experiment">🧪 Test it: does it really match you?</a>
+  </div>
+</section>
+
+<!-- ============================== EXPERIMENT ============================== -->
+<section id="experiment" class="screen" hidden>
+  <h2>🧪 Mini Experiment</h2>
+  <p class="lead">Answer 3 quick questions <b>first</b>. Then we reveal what the star-sign tradition "predicts"
+    and check if it matches. Your answers are anonymous.</p>
+  <div id="quiz"></div>
+  <div id="expDob" hidden>
+    <label class="datelabel">Now your date of birth
+      <input type="date" id="dob2" min="1920-01-01">
+    </label>
+    <button class="btn primary wide" id="revealBtn">Reveal the prediction</button>
+  </div>
+  <div id="expOut" hidden></div>
+
+  <div class="panel">
+    <h3>📊 Exhibition results so far</h3>
+    <div id="tallyOut"></div>
+    <details class="staff">
+      <summary>For the presenter</summary>
+      <p class="small">The counts are kept only on this device. Clear them before the exhibition starts.</p>
+      <button class="btn" id="clearTally">Clear the counts</button>
+    </details>
+  </div>
+</section>
+
+<!-- ============================== LEARN ============================== -->
+<section id="learn" class="screen" hidden>
+  <h2>📚 Learn</h2>
+  <details open>
+    <summary>🤖 What is AI hand landmark detection?</summary>
+    <p>A <b>landmark</b> is a special point we can find again and again - like the tip of your thumb.
+      The AI here (Google's MediaPipe Hand Landmarker) was trained on many thousands of hand pictures in
+      which people had marked 21 points by hand: the wrist, and four points on each finger.</p>
+    <p>It works in two steps. First, a small "palm detector" finds where the hand is in the picture.
+      Then a second network looks closely at that part and guesses the position of all 21 points.
+      It does this many times a second, right here on the phone.</p>
+    <p>From those 21 dots we can measure lengths and angles. We use <b>ratios</b> (one length divided by
+      another), so the answer does not change if your hand is closer to the camera.</p>
+  </details>
+  <details>
+    <summary>🖐️ What are palm prints and dermatoglyphics?</summary>
+    <p><b>Dermatoglyphics</b> is the science of the ridge patterns on our fingers, palms and soles -
+      loops, whorls and arches. These ridges form before we are born, about 10 to 16 weeks into pregnancy,
+      and stay the same all our life.</p>
+    <p>That is why fingerprints are used to identify people: even identical twins have different prints.
+      Doctors have also found that a few rare medical conditions can come with unusual palm creases -
+      but that is a clue for a doctor to check, never a prediction about your life.</p>
+    <p>Our app does <b>not</b> read ridges or lines. It only measures the shape of the hand.</p>
+  </details>
+  <details>
+    <summary>⭐ Are palmistry and astrology science?</summary>
+    <p>They are <b>cultural traditions</b>: very old, interesting and part of many people's history and art.
+      But when scientists have tested them carefully, they have not been able to predict personality or the future.</p>
+    <p>One famous test (Shawn Carlson, published in the journal <i>Nature</i> in 1985) asked astrologers to match
+      people's star charts to their personality test results. They did no better than chance.</p>
+    <p>Why do readings still <i>feel</i> right? This is the <b>Barnum effect</b>: general, positive sentences like
+      "you are kind but sometimes doubt yourself" fit almost everyone, so each person feels they were described.
+      Our Mini Experiment lets you test this yourself.</p>
+  </details>
+  <details>
+    <summary>⚠️ Why can AI be biased or make mistakes?</summary>
+    <p>An AI only knows what it learned from its training pictures. If those pictures had fewer hands of some
+      skin tones, ages, sizes, or hands wearing rings or bandages, it may be less accurate for them.</p>
+    <p>It also struggles with poor light, blur, fingers hidden behind each other, or a tilted hand.
+      It can even mix up left and right. That is why we show the dots so you can <b>check</b> them,
+      and why our Repeat test and Ruler check exist.</p>
+    <p>A good scientist never trusts a measuring tool blindly - not even an AI.</p>
+  </details>
+  <details>
+    <summary>🔒 Why does this app not store photos or personal data?</summary>
+    <p>A picture of your hand is personal. So the camera picture is used only inside this phone, then thrown away.
+      Nothing is uploaded to the internet and no photo is ever saved.</p>
+    <p>Your birthday is used only to work out your sign, then forgotten when you tap <b>New Visitor</b>.
+      The only thing kept is three counts for the exhibition results (visitors, answers, matches) - no names,
+      no birthdays, no pictures.</p>
+  </details>
+</section>
+
+</main>
+
+<footer class="foot">
+  <p class="disclaimer">For education and entertainment. AI cannot predict your future.</p>
+  <p class="small">A Class 8 science exhibition project by Evan.</p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
