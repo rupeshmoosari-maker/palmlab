@@ -1,0 +1,4 @@
+vendor/** -text
+models/** binary
+*.wasm binary
+*.task binary

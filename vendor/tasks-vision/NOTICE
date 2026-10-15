@@ -1,0 +1,4 @@
+MediaPipe Tasks Vision 0.10.14 (@mediapipe/tasks-vision on npm) and the
+hand_landmarker.task model are (c) Google LLC, licensed under the Apache
+License 2.0 (LICENSE in this folder). Bundled unchanged; vision_bundle.mjs
+was saved as vision_bundle.js so every web host serves it as JavaScript.

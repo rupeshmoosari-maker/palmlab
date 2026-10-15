@@ -1,0 +1,11 @@
+{
+  "name": "AI Palm Lab: Science or Story?",
+  "short_name": "AI Palm Lab",
+  "description": "Explore what AI can measure in your hand - and test traditional palmistry claims.",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f3ff",
+  "theme_color": "#5b2bd6",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
