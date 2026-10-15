@@ -110,8 +110,14 @@ async function startCamera() {
   video.srcObject = S.stream;
   await video.play().catch(() => {});
   const settings = S.stream.getVideoTracks()[0].getSettings();
-  const front = settings.facingMode === "user" || (S.facing === "user" && !settings.facingMode);
+  // Phones say which way their camera faces. A laptop webcam usually says
+  // nothing - and it faces the visitor, so it is shown mirrored like a selfie.
+  const front = settings.facingMode === "user" || !settings.facingMode;
   $("stage").classList.toggle("mirror", front);
+  // A laptop webcam gives a wide picture: show all of it instead of cutting
+  // the sides off to fit the tall phone frame.
+  const vw = video.videoWidth || settings.width, vh = video.videoHeight || settings.height;
+  $("stage").style.aspectRatio = vw && vh && vw > vh ? `${vw} / ${vh}` : "";
   $("stageMsg").textContent = "Show an open palm inside the outline, fingers apart, in good light.";
   $("startCam").hidden = true;
   $("flipCam").hidden = false;
@@ -139,6 +145,7 @@ export function stopCamera() {
     $("captureBtn").disabled = true;
     $("repeatBtn").disabled = true;
     $("guide").style.display = "";
+    $("stage").style.aspectRatio = "";
     $("stageMsg").innerHTML = "Tap <b>Start camera</b>, then show an open palm inside the outline.";
   }
 }

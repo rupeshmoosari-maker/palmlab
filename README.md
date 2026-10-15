@@ -93,6 +93,26 @@ Other free hosts work too, because the app is just files with no build step:
 - **Netlify:** drag the folder onto app.netlify.com/drop.
 - **Vercel:** `vercel deploy` in the folder.
 
+## Use it as a desktop app (Windows, Mac, Chromebook)
+
+The site is an installable web app. On a laptop it works with the built-in webcam, opens in its own window like any program, and works offline after the first load.
+
+- **Edge:** open the link → **⋯ menu → Apps → Install this site as an app**.
+- **Chrome:** open the link → the **install icon** at the right of the address bar, or **⋮ menu → Cast, save and share → Install page as app**.
+
+It then appears on the desktop or Start menu as **AI Palm Lab**. Before the exhibition, open it once with internet and start the camera once, so the AI files are saved for offline use.
+
+On a laptop:
+- the webcam picture is **mirrored** like a selfie;
+- the camera view turns **wide** to fit the webcam;
+- visitors can scan their own hand, so the **front camera** set-up is the easy one.
+
+A desktop shortcut can also open it directly in an app window:
+```
+msedge.exe --app=https://<your-user>.github.io/<repo-name>/
+```
+`icons/palmlab.ico` is the icon for that shortcut.
+
 ### When you change a file
 
 The app saves itself on the phone for offline use (`sw.js`). After changing any file, raise the number in `const VERSION = "palmlab-v1"` in `sw.js` (v2, v3, …) so phones fetch the new version.

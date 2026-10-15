@@ -2,10 +2,11 @@
 // The app files are saved on first visit; the AI files (about 17 MB) only
 // the first time the camera screen loads them, so a visitor who never scans
 // never downloads them. Change VERSION whenever a file changes.
-const VERSION = "palmlab-v1";
+const VERSION = "palmlab-v2";
 const CORE = [
   "./", "index.html", "css/style.css", "js/app.js", "js/scan.js", "js/measure.js",
   "js/reading.js", "js/experiment.js", "icon.svg", "manifest.webmanifest",
+  "icons/icon-192.png", "icons/icon-512.png",
 ];
 
 self.addEventListener("install", (e) => {
