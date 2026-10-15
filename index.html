@@ -28,9 +28,10 @@
   <p class="lead">Explore what AI can measure in your hand - and test traditional palmistry claims.</p>
   <div class="bigbtns">
     <a class="big science" href="#scan"><b class="ic">🔬</b><span>Scientific Hand Scan</span><small>AI measures your hand</small></a>
-    <a class="big story" href="#reading"><b class="ic">✨</b><span>Fun Cultural Reading</span><small>Star sign, number &amp; animal</small></a>
+    <a class="big story" href="#reading"><b class="ic">✨</b><span>Palm &amp; Star Reading</span><small>What old palmistry books &amp; astrology say</small></a>
     <a class="big test" href="#experiment"><b class="ic">🧪</b><span>Mini Experiment</span><small>Does the reading match you?</small></a>
     <a class="big learn" href="#learn"><b class="ic">📚</b><span>Learn</span><small>How it works &amp; why</small></a>
+    <a class="big sources" href="#sources"><b class="ic">📜</b><span>Sources &amp; Literature</span><small>The books, and where they disagree</small></a>
   </div>
 </section>
 
@@ -104,17 +105,62 @@
 
 <!-- ============================== READING ============================== -->
 <section id="reading" class="screen" hidden>
-  <h2>✨ Fun Cultural Reading</h2>
-  <p class="lead">Traditions like astrology and numerology link your birthday to personality. Let's see what they say!</p>
-  <label class="datelabel">Your date of birth
-    <input type="date" id="dob" min="1920-01-01">
-  </label>
-  <button class="btn primary wide" id="readBtn">Show my reading</button>
-  <div id="readingOut" hidden>
-    <p class="warnbanner">⚠️ Traditional interpretation only. Not scientifically validated.</p>
-    <div class="cards" id="readingCards"></div>
-    <a class="btn wide" href="#experiment">🧪 Test it: does it really match you?</a>
+  <h2>✨ Palm &amp; Star Reading</h2>
+  <div class="viewtoggle" role="tablist" aria-label="Choose a view">
+    <button role="tab" class="vt science" id="vtScience" data-view="science" aria-selected="false">🔬 Scientific view</button>
+    <button role="tab" class="vt culture" id="vtCulture" data-view="culture" aria-selected="true">✨ Cultural view</button>
   </div>
+
+  <!-- SCIENTIFIC VIEW: only what was measured. No traditions here. -->
+  <div id="viewScience" class="view science-view" hidden>
+    <p class="viewhead">🔬 <b>Scientific view</b> - only numbers the AI measured from your hand. No meanings, no traditions.</p>
+    <div id="sciNone" class="note">No hand scan yet. <a href="#scan">Do a Scientific Hand Scan</a>, then come back.</div>
+    <div class="cards" id="sciCards"></div>
+  </div>
+
+  <!-- CULTURAL VIEW: traditional readings from the two books + astrology. -->
+  <div id="viewCulture" class="view culture-view">
+    <p class="warnbanner">⚠️ Traditional interpretation only. Not scientifically validated.</p>
+    <p class="lead">What do old palmistry books and astrology say? Everything you see comes from our two
+      <a href="#sources">source files</a> - nothing is made up by the AI.</p>
+
+    <h3>1. Your date of birth</h3>
+    <label class="datelabel">Date of birth
+      <input type="date" id="dob" min="1920-01-01">
+    </label>
+
+    <h3>2. Your hand scan <small class="small">(optional)</small></h3>
+    <p id="scanUse" class="note"></p>
+
+    <h3>3. Look at your palm lines <small class="small">(optional)</small></h3>
+    <p class="small">The AI cannot see skin creases - only joints. So <b>you</b> look at your palm and choose.
+      Skip anything you are not sure about.</p>
+    <div id="linePicker"></div>
+
+    <button class="btn primary wide" id="readBtn">Make my reading</button>
+
+    <div id="readingOut" hidden>
+      <p class="warnbanner">⚠️ Traditional interpretation only. Not scientifically validated.</p>
+      <p id="readingSummary" class="summary"></p>
+      <div class="cards" id="readingCards"></div>
+      <details class="why" id="whyBox">
+        <summary>🔎 Why this reading?</summary>
+        <div id="whyOut"></div>
+      </details>
+      <a class="btn wide" href="#experiment">🧪 Test it: does it really match you?</a>
+      <a class="btn wide" href="#sources">📜 Sources &amp; Literature</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SOURCES ============================== -->
+<section id="sources" class="screen" hidden>
+  <h2>📜 Sources &amp; Literature</h2>
+  <p class="lead">Palmistry and astrology are <b>cultural traditions</b> - very old, and part of the art and history
+    of many countries. They are <b>not proven sciences</b>: careful tests have not shown that they predict
+    personality or the future (for example Carlson's test of astrologers, <i>Nature</i>, 1985).
+    This app treats them as <b>literature</b>: it shows what the books say, and says which book said it.</p>
+  <div id="sourcesOut"></div>
 </section>
 
 <!-- ============================== EXPERIMENT ============================== -->

@@ -69,12 +69,23 @@ export function measureHand(landmarks, width, height) {
   const indexLen = fingerLength(p, POINTS.INDEX);
   const ringLen = fingerLength(p, POINTS.RING);
   const thumbLen = fingerLength(p, POINTS.THUMB);
+  const middleLen = fingerLength(p, POINTS.MIDDLE);
+  const palmLength = distance(p[0], p[9]);           // wrist to middle-finger knuckle
   return {
     palmRatio: palmWidth / handLength,
     indexRing: indexLen / ringLen,
     thumbRatio: thumbLen / handLength,
     // index finger direction against little finger direction
     spread: angleBetween(p[5], p[8], p[17], p[20]),
+
+    // Extra shape numbers used only to pick palmistry-book entries
+    // (the Cultural view). They are still just geometry.
+    palmShape: palmWidth / palmLength,               // nearer 1 = squarer palm
+    fingerPalm: middleLen / palmLength,              // long or short fingers for the palm
+    thumbIndex: thumbLen / indexLen,                 // thumb length against the index finger
+    thumbAngle: angleBetween(p[2], p[4], p[5], p[8]),        // thumb held out from the hand
+    gapIndexMiddle: angleBetween(p[5], p[8], p[9], p[12]),   // space between 1st and 2nd fingers
+    gapRingLittle: angleBetween(p[13], p[16], p[17], p[20]), // space between 3rd and 4th fingers
   };
 }
 

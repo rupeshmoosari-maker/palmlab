@@ -209,7 +209,7 @@ function capture() {
   }
   const snap = S.latest;
   const m = measureHand(snap.landmarks, snap.w, snap.h);
-  S.captured = { ...snap, m };
+  S.captured = { ...snap, m, at: new Date() };
   renderCapture();
   return S.captured;
 }
@@ -299,7 +299,8 @@ async function repeatTest() {
     "🟡 <b>A bit wobbly:</b> some ratios changed by 3–8% (or the spread by 2–5°). Small hand movements and tilting change the 2D picture.",
     "🔴 <b>Very wobbly:</b> some ratios changed by more than 8% (or the spread by more than 5°). Check the light, keep the hand flat and facing the camera, and try again.",
   ][level];
-  S.lastRepeatMean = Object.fromEntries(MEASURES.map((m) => [m.key, summarize(done.map((d) => d[m.key])).mean]));
+  // average EVERY measured number (the extra shape numbers too)
+  S.lastRepeatMean = Object.fromEntries(Object.keys(done[0]).map((k) => [k, summarize(done.map((d) => d[k])).mean]));
 }
 
 // ------------------------------------------------------------------ ruler check
@@ -327,6 +328,7 @@ export function initScan() {
     startCamera();
   });
   $("captureBtn").addEventListener("click", () => {
+    S.lastRepeatMean = null;            // a fresh single capture replaces an older repeat-test average
     if (capture()) $("scanResults").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   $("repeatBtn").addEventListener("click", repeatTest);
@@ -338,6 +340,14 @@ export function initScan() {
 // open this screen never download it.
 export function preloadModel() {
   loadModel().catch(() => {});
+}
+
+// The latest captured reading (for the Palm & Star Reading screen):
+// the averaged repeat test if there is one, otherwise the last capture.
+export function lastCapture() {
+  if (!S.captured) return null;
+  return { m: S.lastRepeatMean ? { ...S.captured.m, ...S.lastRepeatMean } : S.captured.m,
+           hand: S.captured.hand, averaged: !!S.lastRepeatMean, at: S.captured.at };
 }
 
 export function resetScan() {

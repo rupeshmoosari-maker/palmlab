@@ -45,6 +45,43 @@ Two extra tools turn the scan into a real science experiment:
 
 Everything runs **inside the browser** (WebAssembly, using the phone's graphics chip when it can). No picture leaves the phone.
 
+## Palm & Star Reading (palmistry and astrology literature)
+
+The reading screen has two clearly separate views:
+
+- **🔬 Scientific view** shows only the numbers the AI measured. There are no meanings and no traditions on this view.
+- **✨ Cultural view** shows what two old palmistry books and astrology say.
+
+**Where the words come from.** Every sentence in a reading comes from two local files:
+
+| File | What's in it |
+|---|---|
+| `data/palmistry_knowledge.json` | Heart, head, life and fate lines plus hand shape, fingers and thumb. Each entry gives the feature, its variation, the traditional meaning, a short summary in our own words, and the book and chapter it came from. |
+| `data/astrology_knowledge.json` | The 12 Western signs with dates and traits, birth numbers 1–9, and the 12 Chinese zodiac animals. |
+
+The sources are Cheiro, *Palmistry for All* (1916, [Project Gutenberg #20480](https://www.gutenberg.org/ebooks/20480)), and Mrs. J. B. Dale, *Indian Palmistry* (1895, [Project Gutenberg #52523](https://www.gutenberg.org/ebooks/52523)). Both are public domain, and every summary was checked against the book text.
+
+**How a reading is built** (`js/palmread.js`). It only *chooses* entries and never writes claims of its own.
+
+1. **Birthday → star sign and birth number.** The Chinese animal is shown as an extra.
+2. **Hand scan → hand shape, finger and thumb entries.** Each has a cut-off written in the JSON, for example "square palm" means palm width ÷ palm length ≥ 0.76.
+3. **Palm lines → the visitor chooses.** The AI finds joints, not skin creases, so it **cannot see palm lines**. The visitor picks what their heart, head, life and fate lines look like.
+4. **2–4 cards are shown.** The visitor's own line answers come first, then firm measurements, then low-confidence ones.
+5. **"Why this reading?"** shows the date arithmetic, the measured value against its cut-off, and the answer that chose each card.
+
+**Labels and notices on every card:**
+
+- **The three labels:**
+  - **Experimental measurement:** the AI measured it.
+  - **Traditional interpretation:** what a book says.
+  - **Low confidence:** the measurement was close to the cut-off, or the book judged the feature by eye in a way the AI can't copy.
+- **Source citation:** book, year and chapter on every reading.
+- **Contradiction notice:** where the two books give different meanings, both are shown side by side under "⚖️ Traditions disagree". Where they agree: "🤝 The books agree".
+
+**Left out on purpose.** Both books predict lifespan, illness, marriage, children, accidents and money. Cheiro also ranks hand shapes by race and class. None of that is shown, and the **Sources & Literature** screen explains why. A short life line, for example, only produces the note *"A short life line does NOT mean a short life."* As a final safety net, `palmread.js` drops any card that contains a forbidden word.
+
+**For Evan: tune the cut-offs.** The cut-offs (`"value"` in each measured entry) are starting guesses. A good experiment is to scan 20 classmates, look at how the numbers spread, and decide where "square" and "long" really split. One surprising finding already: the same hand photo gave palm width ÷ palm length **0.67** as a still image but about **0.60** through the live camera. The AI's answer depends on how it is used.
+
 ## The Mini Experiment
 
 - **Hypothesis:** "A person's star sign predicts whether they prefer logical or creative subjects, are calm or energetic, and like working alone or in a group."
@@ -71,7 +108,13 @@ Open **http://localhost:8776** in Chrome or Edge. The camera works on `localhost
 
 ## Test it
 
-Open **http://localhost:8776/tests/selftest.html**. It runs about 30 checks on the maths, zodiac dates, numerology, Chinese zodiac and the experiment counts, and should end with **ALL PASS**.
+Open **http://localhost:8776/tests/selftest.html**. It runs about 55 checks and should end with **ALL PASS**. They cover:
+- the maths, zodiac dates, numerology, Chinese zodiac and experiment counts;
+- every knowledge-base entry having a source, chapter, label and short text;
+- no forbidden topics anywhere;
+- left-out entries never being shown;
+- contradictions showing both books;
+- a reading always having 2–4 cards.
 
 To also test the real AI on a photo:
 
@@ -156,7 +199,12 @@ css/style.css            look and feel (mobile first)
 js/app.js                screens, reading, experiment, New Visitor
 js/scan.js               camera + AI + drawing + repeat test + ruler check
 js/measure.js            the geometry (pure maths, easy to read)
-js/reading.js            zodiac, numerology, Chinese zodiac, reading texts
+js/reading.js            zodiac, numerology, Chinese zodiac arithmetic
+js/kb.js                 loads the two knowledge bases
+js/palmread.js           builds a reading from the knowledge bases (pure logic)
+js/readingui.js          Palm & Star Reading screen + Sources & Literature screen
+data/palmistry_knowledge.json   palmistry literature (Cheiro 1916, Dale 1895)
+data/astrology_knowledge.json   signs, birth numbers, Chinese animals
 js/experiment.js         questions, matching, the visitor count, chance range
 sw.js                    offline support
 vendor/tasks-vision/     MediaPipe Tasks Vision 0.10.14 (Apache License 2.0)
